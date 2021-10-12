@@ -1,2 +1,2 @@
 ##Pong
-*A Game of table tennis created in JS*
+A Game of table tennis created in JS
