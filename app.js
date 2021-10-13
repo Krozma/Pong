@@ -4,32 +4,48 @@ const W = window.innerWidth;
 const H = window.innerHeight;
 canvas.width = W;
 canvas.height = H;
+const w = 20;
+const h = 150;
+const gap = 20;
 const playerOne = {
-  x: 10,
-  y: H/2 - 90/2,
-  h: 90,
-  w: 10
+  x: gap,
+  y: H/2 - h/2,
+  h: h,
+  w: w
+}
+const playerTwo = {
+  x: W - gap - w,
+  y: H/2 - h/2,
+  h: h,
+  w: w
 }
 function run() {
   requestAnimationFrame(run);
   clear();
-  drawPlayerOne();
+  drawPlayer(playerOne);
+  drawPlayer(playerTwo);
 }
 requestAnimationFrame(run);
 
 window.addEventListener("keydown", (e) => {
   switch (e.code) {
     case "ArrowUp":
-      movePlayerOne(-1);
+      movePlayer(-1, playerOne);
       break;
     case "ArrowDown":
-      movePlayerOne(1);
+      movePlayer(1, playerOne);
+      break;
+    case "KeyW":
+      movePlayer(-1, playerTwo);
+      break;
+    case "KeyS":
+      movePlayer(1, playerTwo);
       break;
   }
 });
 
-function movePlayerOne(dir){
-  playerOne.y += dir* 20;
+function movePlayer(dir, player){
+  player.y += dir* 20;
 }
 
 function clear(){
@@ -37,11 +53,10 @@ function clear(){
   canvas.width = W;
 }
 
-function drawPlayerOne(){
+function drawPlayer(player){
   ctx.beginPath();
-  ctx.rect(playerOne.x, playerOne.y, playerOne.w, playerOne.h)
+  ctx.rect(player.x, player.y, player.w, player.h)
   ctx.stroke();
   ctx.fillStyle = "gray";
   ctx.fill();
 }
-
