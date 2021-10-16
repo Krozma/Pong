@@ -38,6 +38,7 @@ function run() {
   drawPlayer(rightPlayer);
   drawBall();
   inBoundTest();
+  hitPlayerTest();
 }
 requestAnimationFrame(run);
 
@@ -77,6 +78,7 @@ function drawPlayer(player) {
 
 function setScore(player) {
   player.score += 1;
+  console.log(leftPlayer.score, rightPlayer.score)
 }
 
 function resetBallPosition() {
@@ -85,7 +87,7 @@ function resetBallPosition() {
   const rnd = Math.round(Math.random() * 1);
   const dir = rnd == 0 ? -1 : 1;
 
-  ball.velocityX = ball.defaultVelocityX * dir;
+  ball.velocityX = ball.defaultVelocityX * 1; //dir;
 }
 
 function inBoundTest() {
@@ -103,6 +105,22 @@ function inBoundTest() {
   if (ball.y < 0) {
   }
 }
+
+function hitPlayerTest(){
+  if (ball.x < leftPlayer.x + w* 2 && 
+    ball.x > leftPlayer.x + w &&
+    ball.y > leftPlayer.y &&
+    ball.y < leftPlayer.y + h){
+      ball.velocityX = ball.defaultVelocityX;
+  }
+  if (ball.x > rightPlayer.x - w && 
+    ball.x < rightPlayer.x + w &&
+    ball.y > rightPlayer.y &&
+    ball.y < rightPlayer.y + h){
+      ball.velocityX = ball.defaultVelocityX* -1;
+  }
+}
+
 
 function drawBall() {
   ctx.beginPath();
