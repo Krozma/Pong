@@ -44,16 +44,16 @@ requestAnimationFrame(run);
 
 window.addEventListener("keydown", (e) => {
   switch (e.code) {
-    case "ArrowUp":
+    case "KeyW":
       movePlayer(-1, leftPlayer);
       break;
-    case "ArrowDown":
+    case "KeyS":
       movePlayer(1, leftPlayer);
       break;
-    case "KeyW":
+    case "ArrowUp":
       movePlayer(-1, rightPlayer);
       break;
-    case "KeyS":
+    case "ArrowDown":
       movePlayer(1, rightPlayer);
       break;
   }
