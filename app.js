@@ -25,11 +25,18 @@ const ball = {
   x: W / 2,
   y: H / 2,
   r: 8,
-  velocityX: 7,
-  velocityY: 0,
-  defaultVelocityX: 7,
-  defaultVelocityY: 0,
+  dir: -1,
+  velocity: 7,
+  defaultVelocity: 7,
+  angle: getBallAngle(1),
 };
+
+function getBallAngle(dir) {
+  if (dir == 1) {
+    return Math.round(Math.random() * 90) - 45;
+  }
+  return Math.round(Math.random() * 90) + 135;
+}
 
 function run() {
   requestAnimationFrame(run);
@@ -78,16 +85,17 @@ function drawPlayer(player) {
 
 function setScore(player) {
   player.score += 1;
-  console.log(leftPlayer.score, rightPlayer.score)
+  console.log(leftPlayer.score, rightPlayer.score);
 }
 
 function resetBallPosition() {
   ball.x = W / 2;
   ball.y = H / 2;
   const rnd = Math.round(Math.random() * 1);
-  const dir = rnd == 0 ? -1 : 1;
+  ball.dir = rnd == 0 ? -1 : 1;
+  ball.velocity = ball.defaultVelocity * - 1; //dir;
+  ball.angle = getBallAngle(ball.dir);
 
-  ball.velocityX = ball.defaultVelocityX * 1; //dir;
 }
 
 function inBoundTest() {
@@ -95,32 +103,37 @@ function inBoundTest() {
     setScore(leftPlayer);
     resetBallPosition();
   }
-  if (ball.y > H) {
-  }
+  if (ball.y > H - ball.r) {
+    ball.angle -= ball.dir* 90 
+    }
   if (ball.x < 0) {
     setScore(rightPlayer);
     resetBallPosition();
   }
 
-  if (ball.y < 0) {
+  if (ball.y < ball.r) {
+    ball.angle += ball.dir* 90
   }
 }
 
-function hitPlayerTest(){
-  if (ball.x < leftPlayer.x + w* 2 && 
+function hitPlayerTest() {
+  if (
+    ball.x < leftPlayer.x + w * 2 &&
     ball.x > leftPlayer.x + w &&
     ball.y > leftPlayer.y &&
-    ball.y < leftPlayer.y + h){
-      ball.velocityX = ball.defaultVelocityX;
+    ball.y < leftPlayer.y + h
+  ) {
+    ball.velocity = ball.defaultVelocity;
   }
-  if (ball.x > rightPlayer.x - w && 
+  if (
+    ball.x > rightPlayer.x - w &&
     ball.x < rightPlayer.x + w &&
     ball.y > rightPlayer.y &&
-    ball.y < rightPlayer.y + h){
-      ball.velocityX = ball.defaultVelocityX* -1;
+    ball.y < rightPlayer.y + h
+  ) {
+    ball.velocity = ball.defaultVelocity * -1;
   }
 }
-
 
 function drawBall() {
   ctx.beginPath();
@@ -129,6 +142,15 @@ function drawBall() {
   ctx.stroke();
   ctx.fillStyle = "green";
   ctx.fill();
-  ball.x += ball.velocityX;
-  ball.y += ball.velocityY;
+  ball.x += getBallX(ball);
+  ball.y += getBallY(ball);
+  console.log(ball.angle)
+}
+
+function getBallX(ball) {
+  return Math.cos(ball.angle * (Math.PI / 180)) * ball.velocity;
+}
+
+function getBallY(ball) {
+  return Math.sin(ball.angle * (Math.PI / 180)) * ball.velocity;
 }
