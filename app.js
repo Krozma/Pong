@@ -68,6 +68,12 @@ window.addEventListener("keydown", (e) => {
 
 function movePlayer(dir, player) {
   player.y += dir * 20;
+  if (player.y < 0){
+    player.y = 0
+  }
+  if (player.y > H - player.h){
+    player.y = H - player.h
+  }
 }
 
 function clear() {
