@@ -25,10 +25,11 @@ const ball = {
   x: W / 2,
   y: H / 2,
   r: 8,
-  dir: -1,
-  velocity: 7,
-  defaultVelocity: 7,
+  dir: 1,
+  velocity: 10,
+  defaultVelocity: 10,
   angle: getBallAngle(1),
+  bounced: false,
 };
 
 function getBallAngle(dir) {
@@ -46,6 +47,8 @@ function run() {
   drawBall();
   inBoundTest();
   hitPlayerTest();
+  moveBall();
+  //log();
 }
 requestAnimationFrame(run);
 
@@ -66,13 +69,20 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
+function log(){
+  document.getElementById('dir').innerText = 'd:' + ball.dir;
+  document.getElementById('angle').innerText = 'a:' + ball.angle;
+  document.getElementById('x').innerText = 'x:' + parseInt(ball.x);
+  document.getElementById('y').innerText = 'y:' + parseInt(ball.y);
+}
+
 function movePlayer(dir, player) {
   player.y += dir * 20;
-  if (player.y < 0){
-    player.y = 0
+  if (player.y < 0) {
+    player.y = 0;
   }
-  if (player.y > H - player.h){
-    player.y = H - player.h
+  if (player.y > H - player.h) {
+    player.y = H - player.h;
   }
 }
 
@@ -99,9 +109,8 @@ function resetBallPosition() {
   ball.y = H / 2;
   const rnd = Math.round(Math.random() * 1);
   ball.dir = rnd == 0 ? -1 : 1;
-  ball.velocity = ball.defaultVelocity * - 1; //dir;
+  ball.velocity = ball.defaultVelocity * dir;
   ball.angle = getBallAngle(ball.dir);
-
 }
 
 function inBoundTest() {
@@ -109,16 +118,22 @@ function inBoundTest() {
     setScore(leftPlayer);
     resetBallPosition();
   }
-  if (ball.y > H - ball.r) {
-    ball.angle -= ball.dir* 90 
+  if (ball.y > H - ball.r * 2) {
+    if (ball.dir == 1) {
+      ball.angle =- Math.abs(ball.angle);
     }
+    else {
+      ball.angle = Math.abs(ball.angle);
+    }
+  }
   if (ball.x < 0) {
     setScore(rightPlayer);
     resetBallPosition();
   }
 
   if (ball.y < ball.r) {
-    ball.angle += ball.dir* 90
+    ball.angle += ball.dir * 90;
+    ball.y = ball.r;
   }
 }
 
@@ -130,6 +145,7 @@ function hitPlayerTest() {
     ball.y < leftPlayer.y + h
   ) {
     ball.velocity = ball.defaultVelocity;
+    ball.dir = 1
   }
   if (
     ball.x > rightPlayer.x - w &&
@@ -138,6 +154,7 @@ function hitPlayerTest() {
     ball.y < rightPlayer.y + h
   ) {
     ball.velocity = ball.defaultVelocity * -1;
+    ball.dir = -1;
   }
 }
 
@@ -148,9 +165,11 @@ function drawBall() {
   ctx.stroke();
   ctx.fillStyle = "green";
   ctx.fill();
+}
+
+function moveBall() {
   ball.x += getBallX(ball);
   ball.y += getBallY(ball);
-  console.log(ball.angle)
 }
 
 function getBallX(ball) {
