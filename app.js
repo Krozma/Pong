@@ -97,7 +97,7 @@ function log(){
 }
 
 function movePlayer(player) {
-  player.y += player.dir * 16;
+  player.y += player.dir * 10;
   if (player.y < 0) {
     player.y = 0;
   }
