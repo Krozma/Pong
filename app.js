@@ -13,6 +13,7 @@ const leftPlayer = {
   h: h,
   w: w,
   score: 0,
+  dir: 0
 };
 const rightPlayer = {
   x: W - gap - w,
@@ -20,6 +21,7 @@ const rightPlayer = {
   h: h,
   w: w,
   score: 0,
+  dir: 0
 };
 const ball = {
   x: W / 2,
@@ -27,7 +29,6 @@ const ball = {
   r: 8,
   dir: 1,
   velocity: 10,
-  defaultVelocity: 10,
   angle: getBallAngle(1),
   bounced: false,
 };
@@ -48,6 +49,8 @@ function run() {
   inBoundTest();
   hitPlayerTest();
   moveBall();
+  movePlayer(leftPlayer);
+  movePlayer(rightPlayer);
   //log();
 }
 requestAnimationFrame(run);
@@ -55,17 +58,34 @@ requestAnimationFrame(run);
 window.addEventListener("keydown", (e) => {
   switch (e.code) {
     case "KeyW":
-      movePlayer(-1, leftPlayer);
+      leftPlayer.dir = -1;
       break;
     case "KeyS":
-      movePlayer(1, leftPlayer);
+      leftPlayer.dir = 1;
       break;
     case "ArrowUp":
-      movePlayer(-1, rightPlayer);
+      rightPlayer.dir = -1;
       break;
     case "ArrowDown":
-      movePlayer(1, rightPlayer);
+      rightPlayer.dir = 1;
+    break;
+  }
+});
+
+window.addEventListener("keyup", (e) => {
+  switch (e.code) {
+    case "KeyW":
+      leftPlayer.dir = 0;
       break;
+    case "KeyS":
+      leftPlayer.dir = 0;
+      break;
+    case "ArrowUp":
+      rightPlayer.dir = 0;
+      break;
+    case "ArrowDown":
+      rightPlayer.dir = 0;
+    break;
   }
 });
 
@@ -76,8 +96,8 @@ function log(){
   document.getElementById('y').innerText = 'y:' + parseInt(ball.y);
 }
 
-function movePlayer(dir, player) {
-  player.y += dir * 20;
+function movePlayer(player) {
+  player.y += player.dir * 16;
   if (player.y < 0) {
     player.y = 0;
   }
@@ -109,7 +129,6 @@ function resetBallPosition() {
   ball.y = H / 2;
   const rnd = Math.round(Math.random() * 1);
   ball.dir = rnd == 0 ? -1 : 1;
-  ball.velocity = ball.defaultVelocity * dir;
   ball.angle = getBallAngle(ball.dir);
 }
 
@@ -144,17 +163,21 @@ function hitPlayerTest() {
     ball.y > leftPlayer.y &&
     ball.y < leftPlayer.y + h
   ) {
-    ball.velocity = ball.defaultVelocity;
-    ball.dir = 1
-  }
+    ball.dir = 1;
+    const y = leftPlayer.y + leftPlayer.h/2 - ball.y;
+    const p = y/(leftPlayer.h/2);
+    ball.angle = -45* p;
+    }
   if (
     ball.x > rightPlayer.x - w &&
     ball.x < rightPlayer.x + w &&
     ball.y > rightPlayer.y &&
     ball.y < rightPlayer.y + h
   ) {
-    ball.velocity = ball.defaultVelocity * -1;
     ball.dir = -1;
+    const y = rightPlayer.y + rightPlayer.h/2 - ball.y;
+    const p = y/(rightPlayer.h/2);
+    ball.angle = 45* p;
   }
 }
 
@@ -173,9 +196,9 @@ function moveBall() {
 }
 
 function getBallX(ball) {
-  return Math.cos(ball.angle * (Math.PI / 180)) * ball.velocity;
+  return Math.cos(ball.angle * (Math.PI / 180)) * ball.velocity* ball.dir;
 }
 
 function getBallY(ball) {
-  return Math.sin(ball.angle * (Math.PI / 180)) * ball.velocity;
+  return Math.sin(ball.angle * (Math.PI / 180)) * ball.velocity* ball.dir;
 }
